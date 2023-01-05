@@ -7,24 +7,22 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type product struct {
+	Production bool
+	Path       string
+}
+type safeProduct struct {
+	product
+	Test bool
+}
+
 type Config struct {
-	Overwrite  bool
-	Production struct {
-		Ent   bool `yaml:"ent"`
-		Proto bool `yaml:"proto"`
-		Data  bool `yaml:"data"`
-		Biz   bool `yaml:"biz"`
-	}
-	Path struct {
-		Ent   string `yaml:"ent"`
-		Proto string `yaml:"proto"`
-		Data  string `yaml:"data"`
-		Biz   string `yaml:"biz"`
-	}
-	Test struct {
-		Data bool `yaml:"data"`
-		Biz  bool `yaml:"biz"`
-	}
+	Source    string
+	Overwrite bool
+	Ent       product
+	Proto     product
+	Data      safeProduct
+	Biz       safeProduct
 }
 
 func (c *Config) InitConfig() {

@@ -1,16 +1,20 @@
-overwrite: true
-production:
-  ent: true
-  proto: true
-  data: true
-  biz: true
-path:
-  ent: ""
-  proto: ""
-  data: ""
-  biz: ""
-test:
-  data: true
-  biz: true
+source: ""
+overwrite: false
 
- 
+ent:
+  production: true
+  path: ""
+
+proto:
+  production: true
+  path: ""
+
+data:
+  production: true
+  path: ""
+  test: true
+
+biz:
+  production: true
+  path: ""
+  test: true
