@@ -1,7 +1,20 @@
 package cmd
 
-import "fmt"
+import (
+	"TemplateFactory/config"
+	"log"
+)
+
+type data struct {
+	Config config.Config
+}
 
 func Start() {
-	fmt.Println("template factory start")
+	log.Default().Println("template factory start")
+	// config init
+	var dataMod data
+	dataMod.Config.InitConfig()
+
+	//
+
 }

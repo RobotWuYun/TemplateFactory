@@ -1,0 +1,16 @@
+overwrite: true
+production:
+  ent: true
+  proto: true
+  data: true
+  biz: true
+path:
+  ent: ""
+  proto: ""
+  data: ""
+  biz: ""
+test:
+  data: true
+  biz: true
+
+ 
