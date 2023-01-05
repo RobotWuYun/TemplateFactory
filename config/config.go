@@ -1,6 +1,7 @@
 package config
 
 import (
+	"TemplateFactory/config/utils"
 	"io/ioutil"
 	"log"
 
@@ -18,6 +19,7 @@ type safeProduct struct {
 
 type Config struct {
 	Source    string
+	IsDir     bool
 	Overwrite bool
 	Ent       product
 	Proto     product
@@ -34,4 +36,18 @@ func (c *Config) InitConfig() {
 	if err != nil {
 		log.Fatalf("Unmarshal config err : %v", err)
 	}
+	c.checkSource()
+
+}
+
+func (c *Config) checkSource() {
+	if len(c.Source) == 0 {
+		log.Fatalf("source is null")
+		return
+	}
+	if !utils.Exists(c.Source) {
+		log.Fatalf("source is not exists")
+		return
+	}
+	c.IsDir = utils.IsDir(c.Source)
 }
