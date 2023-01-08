@@ -1,6 +1,8 @@
 package utils
 
 import (
+	errs "TemplateFactory/error"
+	"io/fs"
 	"io/ioutil"
 	"os"
 )
@@ -25,6 +27,7 @@ func IsDir(path string) bool {
 	return s.IsDir()
 }
 
+// 获取文件内容
 func GetString(path string) (data string, err error) {
 	var dataByte []byte
 	dataByte, err = ioutil.ReadFile(path)
@@ -32,5 +35,30 @@ func GetString(path string) (data string, err error) {
 		return
 	}
 	data = string(dataByte)
+	return
+}
+
+// 读取目录下所有文件名
+func GetFileNames(path string) (names []string, err error) {
+	if len(path) == 0 {
+		err = errs.ErrFileNotFound
+		return
+	}
+	if !Exists(path) {
+		err = errs.ErrFileNotFound
+		return
+	}
+	if IsDir(path) {
+		var files []fs.FileInfo
+		files, err = ioutil.ReadDir(path)
+		if err != nil {
+			return
+		}
+		for _, v := range files {
+			names = append(names, path+"\\"+v.Name())
+		}
+	} else {
+		names = append(names, path)
+	}
 	return
 }

@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"TemplateFactory/config"
+	"TemplateFactory/utils"
+	"fmt"
 	"log"
 )
 
@@ -14,7 +16,15 @@ func Start() {
 	// config init
 	var dataMod data
 	dataMod.Config.InitConfig()
+	makeFormConfig(dataMod.Config)
+}
 
-	err = dataMod.Config.MakeProto()
-
+func makeFormConfig(c config.Config) {
+	files, err := utils.GetFileNames(c.Source)
+	if err != nil {
+		log.Fatalf("GET fileNames err :", err)
+	}
+	for _, v := range files {
+		fmt.Println(v)
+	}
 }

@@ -1,9 +1,6 @@
 package config
 
 import (
-	"TemplateFactory/core"
-	"TemplateFactory/utils"
-
 	"io/ioutil"
 	"log"
 
@@ -38,28 +35,4 @@ func (c *Config) InitConfig() {
 	if err != nil {
 		log.Fatalf("Unmarshal config err : %v", err)
 	}
-	c.checkSource()
-}
-
-func (c *Config) checkSource() {
-	if len(c.Source) == 0 {
-		log.Fatalf("source is null")
-		return
-	}
-	if !utils.Exists(c.Source) {
-		log.Fatalf("source is not exists")
-		return
-	}
-	c.IsDir = utils.IsDir(c.Source)
-}
-
-func (c *Config) MakeProto() error {
-	if c.Proto.Production {
-		if c.IsDir {
-			return core.Protos.MakeDirProto(c.Proto)
-		} else {
-			core.Protos.MakeFileProto(c.Proto)
-		}
-	}
-	return nil
 }
