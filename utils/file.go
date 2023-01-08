@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"io/ioutil"
+	"os"
+)
 
 func Exists(path string) bool {
 	_, err := os.Stat(path) //os.Stat获取文件信息
@@ -20,4 +23,14 @@ func IsDir(path string) bool {
 		return false
 	}
 	return s.IsDir()
+}
+
+func GetString(path string) (data string, err error) {
+	var dataByte []byte
+	dataByte, err = ioutil.ReadFile(path)
+	if err != nil {
+		return
+	}
+	data = string(dataByte)
+	return
 }

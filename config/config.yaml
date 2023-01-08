@@ -1,20 +1,23 @@
 source: ""
-overwrite: false
 
 ent:
   production: true
   path: ""
+  overwrite: false
 
 proto:
   production: true
   path: ""
+  overwrite: false
 
 data:
   production: true
   path: ""
   test: true
+  overwrite: false
 
 biz:
   production: true
   path: ""
   test: true
+  overwrite: false

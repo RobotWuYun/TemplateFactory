@@ -1,30 +1,32 @@
 package config
 
 import (
-	"TemplateFactory/config/utils"
+	"TemplateFactory/core"
+	"TemplateFactory/utils"
+
 	"io/ioutil"
 	"log"
 
 	"gopkg.in/yaml.v3"
 )
 
-type product struct {
+type Product struct {
 	Production bool
 	Path       string
+	Overwrite  bool
 }
-type safeProduct struct {
-	product
+type SafeProduct struct {
+	Product
 	Test bool
 }
 
 type Config struct {
-	Source    string
-	IsDir     bool
-	Overwrite bool
-	Ent       product
-	Proto     product
-	Data      safeProduct
-	Biz       safeProduct
+	Source string
+	IsDir  bool
+	Ent    Product
+	Proto  Product
+	Data   SafeProduct
+	Biz    SafeProduct
 }
 
 func (c *Config) InitConfig() {
@@ -37,7 +39,6 @@ func (c *Config) InitConfig() {
 		log.Fatalf("Unmarshal config err : %v", err)
 	}
 	c.checkSource()
-
 }
 
 func (c *Config) checkSource() {
@@ -50,4 +51,15 @@ func (c *Config) checkSource() {
 		return
 	}
 	c.IsDir = utils.IsDir(c.Source)
+}
+
+func (c *Config) MakeProto() error {
+	if c.Proto.Production {
+		if c.IsDir {
+			return core.Protos.MakeDirProto(c.Proto)
+		} else {
+			core.Protos.MakeFileProto(c.Proto)
+		}
+	}
+	return nil
 }

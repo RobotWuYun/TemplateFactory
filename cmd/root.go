@@ -14,6 +14,7 @@ func Start() {
 	// config init
 	var dataMod data
 	dataMod.Config.InitConfig()
-	//
+
+	err = dataMod.Config.MakeProto()
 
 }
