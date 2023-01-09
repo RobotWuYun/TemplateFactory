@@ -14,3 +14,4 @@ func errFmt(msg string) string {
 
 // file
 var ErrFileNotFound = errors.New(errFmt("File is not found"))
+var ErrStructNameExist = errors.New(errFmt("struct name is exist,please check your source"))
