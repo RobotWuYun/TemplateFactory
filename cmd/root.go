@@ -3,7 +3,6 @@ package cmd
 import (
 	"TemplateFactory/config"
 	"TemplateFactory/utils"
-	"fmt"
 	"log"
 )
 
@@ -24,7 +23,21 @@ func makeFormConfig(c config.Config) {
 	if err != nil {
 		log.Fatalf("GET fileNames err :", err)
 	}
-	for _, v := range files {
-		fmt.Println(v)
+	var fileMap = make(map[string]string)
+
+	// 循环处理每一个文件
+	for _, path := range files {
+		fileMap[path], err = utils.GetString(path)
+		if err != nil {
+			log.Default().Println("Read file err :", path)
+		}
+	}
+
+	var structMap = make(map[string]map[string]string)
+	for filePath, data := range fileMap {
+		if len(data) == 0 {
+			return
+		}
+
 	}
 }
