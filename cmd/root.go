@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"TemplateFactory/config"
+	"TemplateFactory/core"
 	"TemplateFactory/utils"
+
 	"log"
 )
 
@@ -33,11 +35,11 @@ func makeFormConfig(c config.Config) {
 		}
 	}
 
-	var structMap = make(map[string]map[string]string)
-	for filePath, data := range fileMap {
+	//var structMap = make(map[string]map[string]string)
+	for _, data := range fileMap {
 		if len(data) == 0 {
 			return
 		}
-
+		core.GetStructs(data)
 	}
 }
