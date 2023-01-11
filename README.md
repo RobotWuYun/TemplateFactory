@@ -11,3 +11,5 @@ make
 - dao
 - biz
   from go struct
+
+# first protos
