@@ -26,6 +26,7 @@ func makeFormConfig(c config.Config) {
 		log.Fatalf("GET fileNames err :", err)
 	}
 	var fileMap = make(map[string]string)
+	var structMap = make(map[string]core.StrcutModel)
 
 	// 循环处理每一个文件
 	for _, path := range files {
@@ -36,10 +37,27 @@ func makeFormConfig(c config.Config) {
 	}
 
 	//var structMap = make(map[string]map[string]string)
-	for _, data := range fileMap {
+	for fileName, data := range fileMap {
 		if len(data) == 0 {
 			return
 		}
-		core.GetStructs(data)
+		var structs map[string]string
+		structs, err = core.GetStructs(data)
+		if err != nil {
+			log.Default().Println("parse fail :", fileName)
+			continue
+		}
+		for key, modStr := range structs {
+			if _, ok := structMap[key]; ok {
+				log.Default().Println("strcut is exist :", key)
+			} else {
+				structMap[key] = core.StrcutModel{
+					FilePath: fileName,
+					Data:     modStr,
+				}
+			}
+		}
+
 	}
+
 }

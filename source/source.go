@@ -1,8 +1,8 @@
-type Model struct{
+type Model struct {
 	A string
 	V int
 }
-type helloWEB struct{
+type helloWEB struct {
 	Model
 	name string
 }

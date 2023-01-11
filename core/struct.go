@@ -3,9 +3,14 @@ package core
 import (
 	errs "TemplateFactory/error"
 	"TemplateFactory/utils"
-	"fmt"
 	"regexp"
 )
+
+type StrcutModel struct {
+	FilePath string
+	Data     string
+	Exist    bool
+}
 
 func GetStructs(data string) (structs map[string]string, err error) {
 	structs = make(map[string]string)
@@ -43,7 +48,7 @@ func GetStructs(data string) (structs map[string]string, err error) {
 			structData = append(structData, rune(data[index]))
 			index++
 		}
-		fmt.Println(key + string(structData))
+		structs[key] = key + string(structData)
 	}
 	return
 }

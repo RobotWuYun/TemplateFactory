@@ -1,5 +1,5 @@
-#source: "E:\\go\\src\\TemplateFactory\\source"
-source: "/Users/haoshuo/TemplateFactory/source/source.go"
+source: "E:\\go\\src\\TemplateFactory\\source"
+#source: "/Users/haoshuo/TemplateFactory/source/source.go"
 
 ent:
   production: true
