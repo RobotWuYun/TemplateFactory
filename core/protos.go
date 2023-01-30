@@ -1,10 +1,31 @@
 package core
 
-var Protos protoModel
+import (
+	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
+	"github.com/golang/protobuf/protoc-gen-go/generator"
+)
 
-type protoModel struct{}
+type netrpcPlugin struct{ *generator.Generator }
 
-func (c *protoModel) MakeProto(structMap map[string]StrcutModel) (err error) {
+func (p *netrpcPlugin) Name() string                { return "netrpc" }
+func (p *netrpcPlugin) Init(g *generator.Generator) { p.Generator = g }
 
-	return
+func (p *netrpcPlugin) GenerateImports(file *generator.FileDescriptor) {
+	if len(file.Service) > 0 {
+		p.genImportCode(file)
+	}
+}
+
+func (p *netrpcPlugin) Generate(file *generator.FileDescriptor) {
+	for _, svc := range file.Service {
+		p.genServiceCode(svc)
+	}
+}
+
+func (p *netrpcPlugin) genImportCode(file *generator.FileDescriptor) {
+	p.P("// TODO: import code")
+}
+
+func (p *netrpcPlugin) genServiceCode(svc *descriptor.ServiceDescriptorProto) {
+	p.P("// TODO: service code, Name = " + svc.GetName())
 }

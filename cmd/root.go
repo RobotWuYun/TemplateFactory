@@ -1,63 +1,47 @@
 package cmd
 
 import (
-	"TemplateFactory/config"
-	"TemplateFactory/core"
-	"TemplateFactory/utils"
+	"io/ioutil"
+	"os"
 
-	"log"
+	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
+	"google.golang.org/protobuf/proto"
 )
 
-type data struct {
-	Config config.Config
-}
-
 func Start() {
-	log.Default().Println("template factory start")
-	// config init
-	var dataMod data
-	dataMod.Config.InitConfig()
-	makeFormConfig(dataMod.Config)
-}
+	g := generator.New()
 
-func makeFormConfig(c config.Config) {
-	files, err := utils.GetFileNames(c.Source)
+	data, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
-		log.Fatalf("GET fileNames err :", err)
-	}
-	var fileMap = make(map[string]string)
-	var structMap = make(map[string]core.StrcutModel)
-
-	// 循环处理每一个文件
-	for _, path := range files {
-		fileMap[path], err = utils.GetString(path)
-		if err != nil {
-			log.Default().Println("Read file err :", path)
-		}
+		g.Error(err, "reading input")
 	}
 
-	//var structMap = make(map[string]map[string]string)
-	for fileName, data := range fileMap {
-		if len(data) == 0 {
-			return
-		}
-		var structs map[string]string
-		structs, err = core.GetStructs(data)
-		if err != nil {
-			log.Default().Println("parse fail :", fileName)
-			continue
-		}
-		for key, modStr := range structs {
-			if _, ok := structMap[key]; ok {
-				log.Default().Println("strcut is exist :", key)
-			} else {
-				structMap[key] = core.StrcutModel{
-					FilePath: fileName,
-					Data:     modStr,
-				}
-			}
-		}
-
+	if err := proto.Unmarshal(data, g.Request); err != nil {
+		g.Error(err, "parsing input proto")
 	}
 
+	if len(g.Request.FileToGenerate) == 0 {
+		g.Fail("no files to generate")
+	}
+
+	g.CommandLineParameters(g.Request.GetParameter())
+
+	// Create a wrapped version of the Descriptors and EnumDescriptors that
+	// point to the file that defines them.
+	g.WrapTypes()
+
+	g.SetPackageNames()
+	g.BuildTypeNameMap()
+
+	g.GenerateAllFiles()
+
+	// Send back the results.
+	data, err = proto.Marshal(g.Response)
+	if err != nil {
+		g.Error(err, "failed to marshal output proto")
+	}
+	_, err = os.Stdout.Write(data)
+	if err != nil {
+		g.Error(err, "failed to write output proto")
+	}
 }
