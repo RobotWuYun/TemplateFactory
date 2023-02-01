@@ -1,11 +1,14 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
 	"github.com/golang/protobuf/protoc-gen-go/generator"
 )
 
 type netrpcPlugin struct{ *generator.Generator }
+
+func init() {
+    generator.RegisterPlugin(new(netrpcPlugin))
+}
 
 func (p *netrpcPlugin) Name() string                { return "netrpc" }
 func (p *netrpcPlugin) Init(g *generator.Generator) { p.Generator = g }
@@ -23,9 +26,8 @@ func (p *netrpcPlugin) Generate(file *generator.FileDescriptor) {
 }
 
 func (p *netrpcPlugin) genImportCode(file *generator.FileDescriptor) {
-	p.P("// TODO: import code")
+    p.P("// TODO: import code")
 }
 
 func (p *netrpcPlugin) genServiceCode(svc *descriptor.ServiceDescriptorProto) {
-	p.P("// TODO: service code, Name = " + svc.GetName())
-}
+    p.P("// TODO: service code, Name = " + svc.GetName())

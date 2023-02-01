@@ -4,11 +4,12 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
-	"google.golang.org/protobuf/proto"
+	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/protoc-gen-go/generator"
 )
 
 func Start() {
+
 	g := generator.New()
 
 	data, err := ioutil.ReadAll(os.Stdin)
