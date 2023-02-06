@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -20,12 +21,24 @@ func GetMessage() {
 	plugin := getPlugin()
 
 	for _, file := range plugin.Files {
-		// 通过文件名前缀区分服务和结构
-		if strings.HasPrefix(file.GeneratedFilenamePrefix, MessageFilePre) {
-			MakeStructsFromFile(plugin, file)
-		} else if strings.HasPrefix(file.GeneratedFilenamePrefix, ServiceFilePre) {
+		var fileContent string
+		var buf bytes.Buffer
+		pkg := fmt.Sprintf(`package %s`, file.GoPackageName)
+
+		fileName := strings.Split(file.GeneratedFilenamePrefix, "/")
+
+		if strings.HasPrefix(fileName[len(fileName)-1], MessageFilePre) {
+			fileContent = MakeStructsFromFile(plugin, file)
+		} else if strings.HasPrefix(fileName[len(fileName)-1], ServiceFilePre) {
 			continue
 		}
+		buf.Write([]byte(pkg))
+
+		buf.Write([]byte(fileContent))
+
+		filename := file.GeneratedFilenamePrefix + ".foo.go"
+		file := plugin.NewGeneratedFile(filename, ".")
+		file.Write(buf.Bytes())
 	}
 
 	// 生成响应
@@ -40,19 +53,13 @@ func GetMessage() {
 }
 
 func getPlugin() (p *protogen.Plugin) {
-	input, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
-		panic(err)
-	}
+	input, _ := ioutil.ReadAll(os.Stdin)
 
 	var req pluginpb.CodeGeneratorRequest
-	err = proto.Unmarshal(input, &req)
-	if err != nil {
-		panic(err)
-	}
+	proto.Unmarshal(input, &req)
 
 	opts := protogen.Options{}
-	p, err = opts.New(&req)
+	p, err := opts.New(&req)
 	if err != nil {
 		panic(err)
 	}
