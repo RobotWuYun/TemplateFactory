@@ -1,10 +1,11 @@
 package core
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"protoc-gen-foo/constants"
+	"protoc-gen-foo/utils"
 	"strings"
 
 	"google.golang.org/protobuf/compiler/protogen"
@@ -12,33 +13,17 @@ import (
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
-const (
-	MessageFilePre = "message_"
-	ServiceFilePre = "service_"
-)
-
 func GetMessage() {
 	plugin := getPlugin()
 
 	for _, file := range plugin.Files {
-		var fileContent string
-		var buf bytes.Buffer
-		pkg := fmt.Sprintf(`package %s`, file.GoPackageName)
+		fileName := utils.GetFileName(file.GeneratedFilenamePrefix)
 
-		fileName := strings.Split(file.GeneratedFilenamePrefix, "/")
-
-		if strings.HasPrefix(fileName[len(fileName)-1], MessageFilePre) {
-			fileContent = MakeStructsFromFile(plugin, file)
-		} else if strings.HasPrefix(fileName[len(fileName)-1], ServiceFilePre) {
+		if strings.HasPrefix(fileName, constants.MessageFilePre) {
+			MakeStructsFromFile(plugin, file)
+		} else if strings.HasPrefix(fileName, constants.ServiceFilePre) {
 			continue
 		}
-		buf.Write([]byte(pkg))
-
-		buf.Write([]byte(fileContent))
-
-		filename := file.GeneratedFilenamePrefix + ".foo.go"
-		file := plugin.NewGeneratedFile(filename, ".")
-		file.Write(buf.Bytes())
 	}
 
 	// 生成响应
