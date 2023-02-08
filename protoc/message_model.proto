@@ -6,6 +6,6 @@ option go_package = "/test";
 
 message User {
   //用户名
-  string Name = 1;
-  int64 Age = 2;
+  string name = 1;
+  string ageID = 2;
 }

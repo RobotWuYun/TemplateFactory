@@ -21,6 +21,10 @@ func GetMessage() {
 
 		if strings.HasPrefix(fileName, constants.MessageFilePre) {
 			MakeStructsFromFile(plugin, file)
+			err := MakeSQLsFromFile(plugin, file)
+			if err != nil {
+				panic(err)
+			}
 		} else if strings.HasPrefix(fileName, constants.ServiceFilePre) {
 			continue
 		}

@@ -13,7 +13,7 @@ import (
 func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File) {
 	var buf bytes.Buffer
 	buf.Write([]byte(fmt.Sprintf(`package %s
-		`, file.GoPackageName)))
+	`, file.GoPackageName)))
 
 	var structStrs []string
 	for _, v := range file.Messages {

@@ -1,6 +1,9 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+	"unicode"
+)
 
 func Utf8Index(str, substr string) int {
 	asciiPos := strings.Index(str, substr)
@@ -19,4 +22,15 @@ func Utf8Index(str, substr string) int {
 		}
 	}
 	return pos
+}
+
+func StringHasUpper(word string) (hasUpper bool) {
+	return false
+	for _, r := range word {
+		if unicode.IsUpper(r) {
+			hasUpper = true
+			break
+		}
+	}
+	return
 }
