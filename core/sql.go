@@ -54,7 +54,7 @@ func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 		case "string":
 			fileType = "varchar"
 		}
-		fields = append(fields, fmt.Sprintf(" `%s` %s DEFAULT NULL COMMENT '%s',", field.GoName, fileType, field.GoName))
+		fields = append(fields, fmt.Sprintf(" `%s` %s DEFAULT NULL COMMENT '%s',", field.Desc.Name(), fileType, field.GoName))
 	}
 
 	if !hasFieldID {
@@ -63,6 +63,6 @@ func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 
 	fieldStr := strings.Join(fields, "\r\n")
 
-	content = notes + dorpSQL + fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (\r\n%s PRIMARY KEY (`id`),\r\n) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '%s';", message.GoIdent.GoName, fieldStr, message.GoIdent.GoName)
+	content = notes + dorpSQL + fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (\r\n%s \r\nPRIMARY KEY (`id`),\r\n) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '%s';", message.GoIdent.GoName, fieldStr, message.GoIdent.GoName)
 	return
 }

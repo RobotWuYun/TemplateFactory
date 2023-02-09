@@ -7,5 +7,5 @@ option go_package = "/test";
 message User {
   //用户名
   string name = 1;
-  string ageID = 2;
+  string age_id = 2;
 }
