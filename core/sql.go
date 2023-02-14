@@ -37,12 +37,12 @@ func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) 
 
 func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 	notes := fmt.Sprintf("-- %s\r\n", message.GoIdent.GoName)
-	dorpSQL := fmt.Sprintf("DROP TABLE IF EXISTS `%s`;\r\n", message.GoIdent.GoName)
+	dorpSQL := fmt.Sprintf("DROP TABLE IF EXISTS `%s`;\r\n", utils.ToSnakeCase(message.GoIdent.GoName))
 
 	var hasFieldID bool
 	var fields []string
 	for _, field := range message.Fields {
-		if utils.StringHasUpper(field.GoName) {
+		if utils.StringHasUpper(string(field.Desc.Name())) {
 			err = errs.ErrFieldNameHasUppper
 			return
 		}
@@ -63,6 +63,6 @@ func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 
 	fieldStr := strings.Join(fields, "\r\n")
 
-	content = notes + dorpSQL + fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (\r\n%s \r\nPRIMARY KEY (`id`),\r\n) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '%s';", message.GoIdent.GoName, fieldStr, message.GoIdent.GoName)
+	content = notes + dorpSQL + fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (\r\n%s \r\nPRIMARY KEY (`id`),\r\n) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '%s';", utils.ToSnakeCase(message.GoIdent.GoName), fieldStr, message.GoIdent.GoName)
 	return
 }

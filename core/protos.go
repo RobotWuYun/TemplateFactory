@@ -20,8 +20,15 @@ func GetMessage() {
 		fileName := utils.GetFileName(file.GeneratedFilenamePrefix)
 
 		if strings.HasPrefix(fileName, constants.MessageFilePre) {
-			MakeStructsFromFile(plugin, file)
-			err := MakeSQLsFromFile(plugin, file)
+			err := MakeStructsFromFile(plugin, file)
+			if err != nil {
+				panic(err)
+			}
+			err = MakeSQLsFromFile(plugin, file)
+			if err != nil {
+				panic(err)
+			}
+			err = MakeEntsFromFile(plugin, file)
 			if err != nil {
 				panic(err)
 			}
