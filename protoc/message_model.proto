@@ -4,8 +4,18 @@ package test;
 
 option go_package = "/test";
 
-message User {
-  //用户名
-  string name = 1;
-  string age_id = 2;
+message TestModel {
+  string test_string = 1;
+  bool test_bool = 2;
+  double test_double = 3;
+  float test_float = 4;
+  int32 test_int32 = 5;
+  uint32 test_uint32 = 6;
+  int64 test_int64 = 7;
+  uint64 test_uint64 = 8;
+  sint32 test_sint32  = 9;
+  sint64 test_sint64 = 10;
+  sfixed32 test_sfixd32 = 11;
+  sfixed64 test_sfix64 = 12;
+  bytes test_bytes = 13;
 }

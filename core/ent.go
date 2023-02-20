@@ -44,6 +44,7 @@ func MakeEntFromMessage(message *protogen.Message) (content string, err error) {
 		"entgo.io/ent/schema"
 		"entgo.io/ent/schema/field"
 	)
+
 	`
 
 	typeStr := fmt.Sprintf(`// %s holds the schema definition for the %s entity.
@@ -76,12 +77,7 @@ func MakeEntFromMessage(message *protogen.Message) (content string, err error) {
 		// if field.GoName == "id" {
 		// 	hasFieldID = true
 		// }
-		var fileType string
-		switch field.Desc.Kind().String() {
-		case "string":
-			fileType = "String"
-		}
-		fields = append(fields, fmt.Sprintf(`field.%s("%s"),`, fileType, field.Desc.Name()))
+		fields = append(fields, fmt.Sprintf(`field.%s("%s"),`, getType(field.Desc.Kind().String()), field.Desc.Name()))
 	}
 
 	// if !hasFieldID {
@@ -102,5 +98,14 @@ func (%s) Fields() []ent.Field {
 }
 `, message.GoIdent.GoName, message.GoIdent.GoName, fieldStr) +
 			EdgesStr
+	return
+}
+
+func getType(source string) (result string) {
+	if data, ok := constants.PbField2entMap[source]; ok {
+		result = data
+	} else {
+		return ""
+	}
 	return
 }
