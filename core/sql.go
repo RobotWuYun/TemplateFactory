@@ -49,12 +49,7 @@ func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 		if field.GoName == "id" {
 			hasFieldID = true
 		}
-		var fileType string
-		switch field.Desc.Kind().String() {
-		case "string":
-			fileType = "varchar"
-		}
-		fields = append(fields, fmt.Sprintf(" `%s` %s DEFAULT NULL COMMENT '%s',", field.Desc.Name(), fileType, field.GoName))
+		fields = append(fields, fmt.Sprintf(" `%s` %s DEFAULT NULL COMMENT '%s',", field.Desc.Name(), getSqlType(field.Desc.Kind().String()), field.GoName))
 	}
 
 	if !hasFieldID {
@@ -64,5 +59,14 @@ func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 	fieldStr := strings.Join(fields, "\r\n")
 
 	content = notes + dorpSQL + fmt.Sprintf("CREATE TABLE IF NOT EXISTS `%s` (\r\n%s \r\nPRIMARY KEY (`id`),\r\n) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '%s';", utils.ToSnakeCase(message.GoIdent.GoName), fieldStr, message.GoIdent.GoName)
+	return
+}
+
+func getSqlType(source string) (result string) {
+	if data, ok := constants.PbField2SqlMap[source]; ok {
+		result = data
+	} else {
+		return ""
+	}
 	return
 }

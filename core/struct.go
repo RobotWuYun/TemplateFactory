@@ -43,10 +43,19 @@ func MakeStructsFromMessage(message *protogen.Message) (str string, err error) {
 			err = errs.ErrFieldNameHasUppper
 			return
 		}
-		fields = append(fields, fmt.Sprintf("%s\t%s", field.GoName, field.Desc.Kind().String()))
+		fields = append(fields, fmt.Sprintf("%s\t%s", field.GoName, getStructType(field.Desc.Kind().String())))
 	}
 	fieldStr := strings.Join(fields, "\r\n")
 
 	str = fmt.Sprintf("type %s struct {\r\n%s}", message.GoIdent.GoName, fieldStr)
+	return
+}
+
+func getStructType(source string) (result string) {
+	if data, ok := constants.PbField2StructMap[source]; ok {
+		result = data
+	} else {
+		return ""
+	}
 	return
 }

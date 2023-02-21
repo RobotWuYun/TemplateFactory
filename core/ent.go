@@ -77,7 +77,7 @@ func MakeEntFromMessage(message *protogen.Message) (content string, err error) {
 		// if field.GoName == "id" {
 		// 	hasFieldID = true
 		// }
-		fields = append(fields, fmt.Sprintf(`field.%s("%s"),`, getType(field.Desc.Kind().String()), field.Desc.Name()))
+		fields = append(fields, fmt.Sprintf(`field.%s("%s"),`, getEntType(field.Desc.Kind().String()), field.Desc.Name()))
 	}
 
 	// if !hasFieldID {
@@ -101,8 +101,8 @@ func (%s) Fields() []ent.Field {
 	return
 }
 
-func getType(source string) (result string) {
-	if data, ok := constants.PbField2entMap[source]; ok {
+func getEntType(source string) (result string) {
+	if data, ok := constants.PbField2EntMap[source]; ok {
 		result = data
 	} else {
 		return ""
