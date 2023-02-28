@@ -30,7 +30,7 @@ func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File) (err erro
 	buf.Write([]byte(strings.Join(structStrs, "\r\n")))
 
 	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".go"
-	newfile := plugin.NewGeneratedFile(filename, ".")
+	newfile := plugin.NewGeneratedFile(`data/`+filename, ".")
 	newfile.Write(buf.Bytes())
 
 	return

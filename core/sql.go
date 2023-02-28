@@ -29,7 +29,7 @@ func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) 
 	buf.Write([]byte(strings.Join(sqlStrs, "\r\n")))
 
 	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".sql"
-	newfile := plugin.NewGeneratedFile(filename, ".")
+	newfile := plugin.NewGeneratedFile(`sql/`+filename, ".")
 	newfile.Write(buf.Bytes())
 
 	return

@@ -29,7 +29,7 @@ func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) 
 	buf.Write([]byte(strings.Join(entStrs, "\r\n")))
 
 	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".go"
-	newfile := plugin.NewGeneratedFile(`ent_`+filename, ".")
+	newfile := plugin.NewGeneratedFile(`ent/schema/`+filename, "./schema")
 	newfile.Write(buf.Bytes())
 
 	return

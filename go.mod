@@ -7,4 +7,7 @@ require (
 	google.golang.org/protobuf v1.26.0-rc.1
 )
 
-require golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+require (
+	entgo.io/ent v0.11.8 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+)
