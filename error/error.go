@@ -18,3 +18,5 @@ var ErrStructNameExist = errors.New(errFmt("struct name is exist,please check yo
 
 // field
 var ErrFieldNameHasUppper = errors.New(errFmt("field name has upper"))
+
+// config

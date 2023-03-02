@@ -1,8 +1,11 @@
 package main
 
-import "protoc-gen-foo/cmd"
+import (
+	"fmt"
+	"protoc-gen-foo/config"
+)
 
 func main() {
-	cmd.Start()
-	//fmt.Println(strings.HasPrefix("message_model.proto", "message_"))
+	//cmd.Start()
+	fmt.Println(config.GetConf())
 }
