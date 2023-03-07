@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"protoc-gen-foo/config"
+	"protoc-gen-foo/cmd"
 )
 
 func main() {
-	//cmd.Start()
-	fmt.Println(config.GetConf())
+	cmd.Start()
 }

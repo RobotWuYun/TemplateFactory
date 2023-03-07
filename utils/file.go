@@ -1,6 +1,8 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+)
 
 func GetFileName(path string) (name string) {
 	if path == "" {

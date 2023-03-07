@@ -1,63 +1,23 @@
 package core
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-	"protoc-gen-foo/constants"
-	"protoc-gen-foo/utils"
-	"strings"
+	errs "protoc-gen-foo/error"
 
 	"google.golang.org/protobuf/compiler/protogen"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/pluginpb"
 )
 
-func GetMessage() {
-	plugin := getPlugin()
-
-	for _, file := range plugin.Files {
-		fileName := utils.GetFileName(file.GeneratedFilenamePrefix)
-
-		if strings.HasPrefix(fileName, constants.MessageFilePre) {
-			err := MakeStructsFromFile(plugin, file)
-			if err != nil {
-				panic(err)
-			}
-			err = MakeSQLsFromFile(plugin, file)
-			if err != nil {
-				panic(err)
-			}
-			err = MakeEntsFromFile(plugin, file)
-			if err != nil {
-				panic(err)
-			}
-		} else if strings.HasPrefix(fileName, constants.ServiceFilePre) {
-			continue
-		}
-	}
-
-	// 生成响应
-	stdout := plugin.Response()
-	out, err := proto.Marshal(stdout)
+func MakeMessageFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
+	err = MakeStructsFromFile(plugin, file)
 	if err != nil {
-		panic(err)
+		return
 	}
-
-	// 将响应写回标准输入, protoc会读取这个内容
-	fmt.Fprintf(os.Stdout, string(out))
-}
-
-func getPlugin() (p *protogen.Plugin) {
-	input, _ := ioutil.ReadAll(os.Stdin)
-
-	var req pluginpb.CodeGeneratorRequest
-	proto.Unmarshal(input, &req)
-
-	opts := protogen.Options{}
-	p, err := opts.New(&req)
+	err = MakeSQLsFromFile(plugin, file)
 	if err != nil {
-		panic(err)
+		return
+	}
+	err = MakeEntsFromFile(plugin, file)
+	if err != nil {
+		return
 	}
 	return
 }

@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) {
+func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
 	var buf bytes.Buffer
 
 	var sqlStrs []string
@@ -35,7 +35,7 @@ func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) 
 	return
 }
 
-func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
+func MakeSqlFromMessage(message *protogen.Message) (content string, err *errs.SelfError) {
 	notes := fmt.Sprintf("-- %s\r\n", message.GoIdent.GoName)
 	dorpSQL := fmt.Sprintf("DROP TABLE IF EXISTS `%s`;\r\n", utils.ToSnakeCase(message.GoIdent.GoName))
 
@@ -43,7 +43,7 @@ func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 	var fields []string
 	for _, field := range message.Fields {
 		if utils.StringHasUpper(string(field.Desc.Name())) {
-			err = errs.ErrFieldNameHasUppper
+			err = errs.ErrFieldNameHasUppper(nil)
 			return
 		}
 		if field.GoName == "id" {

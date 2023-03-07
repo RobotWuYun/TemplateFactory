@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) {
+func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
 	var buf bytes.Buffer
 
 	var entStrs []string
@@ -35,7 +35,7 @@ func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) 
 	return
 }
 
-func MakeEntFromMessage(message *protogen.Message) (content string, err error) {
+func MakeEntFromMessage(message *protogen.Message) (content string, err *errs.SelfError) {
 	head := `package schema
 	
 	import (
@@ -71,7 +71,7 @@ func MakeEntFromMessage(message *protogen.Message) (content string, err error) {
 	var fields []string
 	for _, field := range message.Fields {
 		if utils.StringHasUpper(string(field.Desc.Name())) {
-			err = errs.ErrFieldNameHasUppper
+			err = errs.ErrFieldNameHasUppper(nil)
 			return
 		}
 		// if field.GoName == "id" {

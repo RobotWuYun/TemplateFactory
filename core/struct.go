@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File) (err error) {
+func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
 	var buf bytes.Buffer
 	buf.Write([]byte(fmt.Sprintf(`package %s
 	`, file.GoPackageName)))
@@ -36,11 +36,11 @@ func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File) (err erro
 	return
 }
 
-func MakeStructsFromMessage(message *protogen.Message) (str string, err error) {
+func MakeStructsFromMessage(message *protogen.Message) (str string, err *errs.SelfError) {
 	var fields []string
 	for _, field := range message.Fields {
 		if utils.StringHasUpper(string(field.Desc.Name())) {
-			err = errs.ErrFieldNameHasUppper
+			err = errs.ErrFieldNameHasUppper(nil)
 			return
 		}
 		fields = append(fields, fmt.Sprintf("%s\t%s", field.GoName, getStructType(field.Desc.Kind().String())))
