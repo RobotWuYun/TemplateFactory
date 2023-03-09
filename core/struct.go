@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"fmt"
+	"protoc-gen-foo/config"
 	"protoc-gen-foo/constants"
 	errs "protoc-gen-foo/error"
 	"protoc-gen-foo/utils"
@@ -11,7 +12,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
+func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File, config config.StructConf) (err error) {
 	var buf bytes.Buffer
 	buf.Write([]byte(fmt.Sprintf(`package %s
 	`, file.GoPackageName)))
@@ -29,14 +30,17 @@ func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *err
 
 	buf.Write([]byte(strings.Join(structStrs, "\r\n")))
 
-	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".go"
-	newfile := plugin.NewGeneratedFile(`data/`+filename, ".")
-	newfile.Write(buf.Bytes())
+	if len(config.FilePrefix) == 0 {
+		config.FilePrefix = `data/`
+	}
 
+	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".go"
+	newfile := plugin.NewGeneratedFile(config.FilePrefix+filename, ".")
+	newfile.Write(buf.Bytes())
 	return
 }
 
-func MakeStructsFromMessage(message *protogen.Message) (str string, err *errs.SelfError) {
+func MakeStructsFromMessage(message *protogen.Message) (str string, err error) {
 	var fields []string
 	for _, field := range message.Fields {
 		if utils.StringHasUpper(string(field.Desc.Name())) {

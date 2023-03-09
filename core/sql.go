@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"fmt"
+	"protoc-gen-foo/config"
 	"protoc-gen-foo/constants"
 	errs "protoc-gen-foo/error"
 	"protoc-gen-foo/utils"
@@ -12,7 +13,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
+func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File, conf config.SqlConf) (err error) {
 	var buf bytes.Buffer
 
 	var sqlStrs []string
@@ -28,14 +29,17 @@ func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.S
 
 	buf.Write([]byte(strings.Join(sqlStrs, "\r\n")))
 
+	if len(conf.FilePrefix) == 0 {
+		conf.FilePrefix = "`sql/`"
+	}
 	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".sql"
-	newfile := plugin.NewGeneratedFile(`sql/`+filename, ".")
+	newfile := plugin.NewGeneratedFile(conf.FilePrefix+filename, ".")
 	newfile.Write(buf.Bytes())
 
 	return
 }
 
-func MakeSqlFromMessage(message *protogen.Message) (content string, err *errs.SelfError) {
+func MakeSqlFromMessage(message *protogen.Message) (content string, err error) {
 	notes := fmt.Sprintf("-- %s\r\n", message.GoIdent.GoName)
 	dorpSQL := fmt.Sprintf("DROP TABLE IF EXISTS `%s`;\r\n", utils.ToSnakeCase(message.GoIdent.GoName))
 

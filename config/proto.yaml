@@ -1,0 +1,11 @@
+ent:
+  make: false
+  filePrefix: "" # data/
+
+sql:
+  make: false
+  filePrefix: "" # sql/
+
+struct:
+  make: true
+  filePrefix: "" # data/

@@ -1,8 +1,0 @@
-ent:
-  make: true
-
-sql:
-  make: true
-
-struct:
-  make: true

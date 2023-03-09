@@ -18,18 +18,21 @@ import (
 )
 
 func Start() {
-	plugin, path, serr := getPlugin()
-	if serr != nil {
-		panic(serr.Str())
+	config, err := config.GetConf()
+	if err != nil {
+		panic(err.(errs.SelfError).Str())
 	}
-	config := config.GetConf(path)
-	fmt.Println(config)
+
+	plugin, err := getPlugin()
+	if err != nil {
+		panic(err.(errs.SelfError).Str())
+	}
 
 	for _, file := range plugin.Files {
 		fileName := utils.GetFileName(file.GeneratedFilenamePrefix)
 
 		if strings.HasPrefix(fileName, constants.MessageFilePre) {
-			err := core.MakeMessageFile(plugin, file)
+			err := core.MakeMessageFile(plugin, file, config)
 			if err != nil {
 				panic(err)
 			}
@@ -49,25 +52,24 @@ func Start() {
 	fmt.Fprintf(os.Stdout, string(out))
 }
 
-func getPlugin() (p *protogen.Plugin, path string, serr *errs.SelfError) {
+func getPlugin() (p *protogen.Plugin, err error) {
 	var input []byte
-	var err error
 	input, err = ioutil.ReadAll(os.Stdin)
 	if err != nil {
-		serr = errs.ErrInput(err)
+		err = errs.ErrInput(err)
 		return
 	}
 	var req pluginpb.CodeGeneratorRequest
 	err = proto.Unmarshal(input, &req)
 	if err != nil {
-		serr = errs.ErrGeneral(err)
+		err = errs.ErrGeneral(err)
 		return
 	}
-	path = *req.Parameter
+
 	opts := protogen.Options{}
 	p, err = opts.New(&req)
 	if err != nil {
-		serr = errs.ErrGeneral(err)
+		err = errs.ErrGeneral(err)
 		return
 	}
 	return

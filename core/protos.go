@@ -1,23 +1,29 @@
 package core
 
 import (
-	errs "protoc-gen-foo/error"
+	"protoc-gen-foo/config"
 
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeMessageFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
-	err = MakeStructsFromFile(plugin, file)
-	if err != nil {
-		return
+func MakeMessageFile(plugin *protogen.Plugin, file *protogen.File, config config.Config) (err error) {
+	if config.Struct.Make {
+		err = MakeStructsFromFile(plugin, file, config.Struct)
+		if err != nil {
+			return
+		}
 	}
-	err = MakeSQLsFromFile(plugin, file)
-	if err != nil {
-		return
+	if config.Sql.Make {
+		err = MakeSQLsFromFile(plugin, file, config.Sql)
+		if err != nil {
+			return
+		}
 	}
-	err = MakeEntsFromFile(plugin, file)
-	if err != nil {
-		return
+	if config.Ent.Make {
+		err = MakeEntsFromFile(plugin, file)
+		if err != nil {
+			return
+		}
 	}
 	return
 }

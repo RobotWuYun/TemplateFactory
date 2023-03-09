@@ -4,29 +4,44 @@ import (
 	"io/ioutil"
 
 	"gopkg.in/yaml.v2"
+
+	errs "protoc-gen-foo/error"
 )
 
-type Config struct {
-	Ent struct {
-		Make bool
-	}
-	Sql struct {
-		Make bool
-	}
-	Struct struct {
-		Make bool
-	}
+type pubConf struct {
+	Make       bool
+	FilePrefix string
 }
 
-func GetConf(path string) Config {
-	var conf Config // 加载文件
-	yamlFile, err := ioutil.ReadFile(path + "../config/config.yaml")
+type EntConf struct {
+	pubConf
+}
+
+type SqlConf struct {
+	pubConf
+}
+
+type StructConf struct {
+	pubConf
+}
+
+type Config struct {
+	Ent    EntConf
+	Sql    SqlConf
+	Struct StructConf
+}
+
+func GetConf() (conf Config, err error) {
+	yamlFile, err := ioutil.ReadFile("config/proto.yaml")
 	if err != nil {
-		panic(err)
-	} // 将读取的yaml文件解析为响应的 struct
+		err = errs.ErrFileNotFound(err)
+		return
+	}
+	// 将读取的yaml文件解析为响应的 struct
 	err = yaml.Unmarshal(yamlFile, &conf)
 	if err != nil {
-		panic(err)
+		err = errs.ErrGeneral(err)
+		return
 	}
-	return conf
+	return
 }
