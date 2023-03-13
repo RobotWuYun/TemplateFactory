@@ -1,11 +1,12 @@
 ent:
-  make: false
+  make: true
   filePrefix: "" # data/
 
 sql:
-  make: false
+  make: true
   filePrefix: "" # sql/
 
 struct:
   make: true
   filePrefix: "" # data/
+  structSuffix : "" # Repo

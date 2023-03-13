@@ -8,7 +8,7 @@ import (
 
 func MakeMessageFile(plugin *protogen.Plugin, file *protogen.File, config config.Config) (err error) {
 	if config.Struct.Make {
-		err = MakeStructsFromFile(plugin, file, config.Struct)
+		err = MakeStructsFromFile(plugin, file, config)
 		if err != nil {
 			return
 		}
@@ -20,7 +20,7 @@ func MakeMessageFile(plugin *protogen.Plugin, file *protogen.File, config config
 		}
 	}
 	if config.Ent.Make {
-		err = MakeEntsFromFile(plugin, file)
+		err = MakeEntsFromFile(plugin, file, config.Ent)
 		if err != nil {
 			return
 		}

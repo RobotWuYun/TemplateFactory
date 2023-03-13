@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"fmt"
+	"protoc-gen-foo/config"
 	"protoc-gen-foo/constants"
 	errs "protoc-gen-foo/error"
 	"protoc-gen-foo/utils"
@@ -12,7 +13,7 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.SelfError) {
+func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File, config config.EntConf) (err *errs.SelfError) {
 	var buf bytes.Buffer
 
 	var entStrs []string
@@ -25,11 +26,13 @@ func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File) (err *errs.S
 			return
 		}
 	}
-
+	if config.FilePrefix == "" {
+		config.FilePrefix = `ent/schema/`
+	}
 	buf.Write([]byte(strings.Join(entStrs, "\r\n")))
 
 	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".go"
-	newfile := plugin.NewGeneratedFile(`ent/schema/`+filename, "./schema")
+	newfile := plugin.NewGeneratedFile(config.FilePrefix+filename, "./schema")
 	newfile.Write(buf.Bytes())
 
 	return

@@ -23,6 +23,7 @@ type SqlConf struct {
 
 type StructConf struct {
 	pubConf
+	StructSuffix string
 }
 
 type Config struct {
