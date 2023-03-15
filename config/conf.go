@@ -9,27 +9,28 @@ import (
 )
 
 type pubConf struct {
-	Make       bool
-	FilePrefix string
 }
 
 type EntConf struct {
-	pubConf
+	Make       bool   `yaml:"make"`
+	FilePrefix string `yaml:"filePrefix"`
 }
 
 type SqlConf struct {
-	pubConf
+	Make       bool   `yaml:"make"`
+	FilePrefix string `yaml:"filePrefix"`
 }
 
 type StructConf struct {
-	pubConf
-	StructSuffix string
+	Make         bool   `yaml:"make"`
+	FilePrefix   string `yaml:"filePrefix"`
+	StructSuffix string `yaml:"structSuffix"`
 }
 
 type Config struct {
-	Ent    EntConf
-	Sql    SqlConf
-	Struct StructConf
+	Ent    EntConf    `yaml:"ent"`
+	Sql    SqlConf    `yaml:"sql"`
+	Struct StructConf `yaml:"struct"`
 }
 
 func GetConf() (conf Config, err error) {

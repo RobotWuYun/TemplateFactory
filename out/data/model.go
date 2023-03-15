@@ -1,17 +1,28 @@
 package test
 
-type TestModel struct {
-	TestString  string
-	TestBool    bool
-	TestDouble  float64
-	TestFloat   float32
-	TestInt32   int32
-	TestUint32  uint32
-	TestInt64   int64
-	TestUint64  uint64
-	TestSint32  int32
-	TestSint64  int64
-	TestSfixd32 uint32
-	TestSfix64  uint64
-	TestBytes   string
+import "time"
+
+type testModelRepo struct {
+	mysql          interface{}
+	log            interface{}
+	mongo          interface{}
+	redis          interface{}
+	cache          interface{}
+	cacheKeyPrefix string
+	cacheDuration  time.Duration
+	mq             interface{}
+}
+
+// todo NewTestModelRepoRepo .
+func NewTestModelRepo() biz.TestModelRepoRepo {
+	return &testModelRepo{
+		mysql:          nil,
+		log:            nil,
+		mongo:          nil,
+		redis:          nil,
+		cache:          nil,
+		cacheKeyPrefix: "TestModelRepo:TestModelRepo",
+		cacheDuration:  time.Millisecond,
+		mq:             nil,
+	}
 }

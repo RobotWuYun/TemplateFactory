@@ -17,26 +17,10 @@ func MakeStructsFromFile(plugin *protogen.Plugin, file *protogen.File, config co
 	buf.Write([]byte(fmt.Sprintf(`package %s
 	`, file.GoPackageName)))
 
-	buf.Write([]byte(fmt.Sprintf(`type %s%s struct{
-	mysql                 interface{}
-	log                    interface{}
-	mongo					interface{}
-	redis					interface{}
-	cache					interface{}
-    cacheKeyPrefix 			string
-	cacheDuration  			time.Duration
-	mq             			interface{}
-	}
-	`, file.GoPackageName)))
-
 	var structStrs []string
 	for _, v := range file.Messages {
 		var initStr string
 		initStr, err = makeInitsFromMessage(v, cast.ToString(file.GoPackageName), config.Struct.StructSuffix)
-		if err != nil {
-			return err
-		}
-		initStr, err = makeStructsFromMessage(v)
 		if err != nil {
 			return err
 		}
@@ -60,39 +44,20 @@ func makeInitsFromMessage(message *protogen.Message, packname, suffix string) (i
 		suffix = "Repo"
 	}
 	structName := message.GoIdent.GoName + suffix
-	firstlowName := utils.FirstLower(structName)
+	firstLowName := utils.FirstLower(structName)
 
-	structStr := fmt.Sprintf(`type %s struct{
-	mysql                 interface{}
-	log                    interface{}
-	mongo					interface{}
-	redis					interface{}
-	cache					interface{}
-    cacheKeyPrefix 			string
-	cacheDuration  			time.Duration
-	mq             			interface{}
-	}
-	`, firstlowName)
+	structStr := fmt.Sprintf(constants.InitStructFormat, firstLowName)
 
-	newFunc := fmt.Sprintf(`// todo New%sRepo .
-func New%s() biz.%sRepo {
-	return &%s{
-		mysql                nil,
-	log                    nil,
-	mongo					nil,
-	redis					nil,
-	cache					nil,
-    cacheKeyPrefix 			%s%s,
-	cacheDuration  			nil,
-	mq             			nil,
-	}
-}`, structName, structName, structName, firstlowName, structName, fmt.Sprintf("%s:%s", packname, structName))
+	newFunc := fmt.Sprintf(constants.InitNewFuncFormat, structName, structName, structName, firstLowName, structName, fmt.Sprintf("%s:%s", packname, structName))
 
-	initStr = structStr + "/r/n" + newFunc
+	initStr = fmt.Sprintf(`%s
+
+%s`, structStr, newFunc)
+
 	return
 }
 
-func makeStructsFromMessage(message *protogen.Message) (str string, err error) {
+func makeConvertMessage(message *protogen.Message, conf config.Config) (str string, err error) {
 	var fields []string
 	for _, field := range message.Fields {
 		if utils.StringHasUpper(string(field.Desc.Name())) {

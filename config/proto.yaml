@@ -1,9 +1,9 @@
 ent:
-  make: true
+  make: false
   filePrefix: "" # data/
 
 sql:
-  make: true
+  make: false
   filePrefix: "" # sql/
 
 struct:

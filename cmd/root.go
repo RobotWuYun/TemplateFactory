@@ -23,7 +23,7 @@ func Start() {
 		panic(err.(errs.SelfError).Str())
 	}
 
-	plugin, err := getPlugin()
+	plugin, err, _ := getPlugin()
 	if err != nil {
 		panic(err.(errs.SelfError).Str())
 	}
@@ -34,7 +34,7 @@ func Start() {
 		if strings.HasPrefix(fileName, constants.MessageFilePre) {
 			err := core.MakeMessageFile(plugin, file, config)
 			if err != nil {
-				panic(err)
+				panic(err.(*errs.SelfError).Str)
 			}
 		} else if strings.HasPrefix(fileName, constants.ServiceFilePre) {
 			continue
@@ -52,8 +52,7 @@ func Start() {
 	fmt.Fprintf(os.Stdout, string(out))
 }
 
-func getPlugin() (p *protogen.Plugin, err error) {
-	var input []byte
+func getPlugin() (p *protogen.Plugin, err error, input []byte) {
 	input, err = ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		err = errs.ErrInput(err)
