@@ -13,23 +13,25 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 )
 
-func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File, config config.EntConf) (err *errs.SelfError) {
+func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File, config config.EntConf) (err error) {
 	var buf bytes.Buffer
 
 	var entStrs []string
 	for _, v := range file.Messages {
-		var sqlStr string
-		if sqlStr, err = MakeEntFromMessage(v); err == nil {
+		var entStr string
+		if entStr, err = MakeEntFromMessage(v); err == nil {
 			entStrs = append(entStrs, fmt.Sprintf(`%s
-		`, sqlStr))
+		`, entStr))
 		} else {
 			return
 		}
 	}
-	if config.FilePrefix == "" {
+
+	buf.Write([]byte(strings.Join(entStrs, "\r\n")))
+
+	if len(config.FilePrefix) == 0 {
 		config.FilePrefix = `ent/schema/`
 	}
-	buf.Write([]byte(strings.Join(entStrs, "\r\n")))
 
 	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".go"
 	newfile := plugin.NewGeneratedFile(config.FilePrefix+filename, "./schema")
@@ -38,7 +40,7 @@ func MakeEntsFromFile(plugin *protogen.Plugin, file *protogen.File, config confi
 	return
 }
 
-func MakeEntFromMessage(message *protogen.Message) (content string, err *errs.SelfError) {
+func MakeEntFromMessage(message *protogen.Message) (content string, err error) {
 	head := `package schema
 	
 	import (

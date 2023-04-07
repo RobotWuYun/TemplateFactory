@@ -30,7 +30,7 @@ func MakeSQLsFromFile(plugin *protogen.Plugin, file *protogen.File, conf config.
 	buf.Write([]byte(strings.Join(sqlStrs, "\r\n")))
 
 	if len(conf.FilePrefix) == 0 {
-		conf.FilePrefix = "`sql/`"
+		conf.FilePrefix = `sql/`
 	}
 	filename := utils.GetSelfFileName(constants.MessageFilePre, file.GeneratedFilenamePrefix) + ".sql"
 	newfile := plugin.NewGeneratedFile(conf.FilePrefix+filename, ".")
